@@ -11,6 +11,7 @@ class Webservice extends CI_Controller {
         parent::__construct();
 
         $this->load->model('mainpagedata');
+        //$this->load->library('facebook');
 
         $_POST = json_decode(file_get_contents("php://input"), TRUE);
         header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP 1.1.
@@ -165,7 +166,7 @@ class Webservice extends CI_Controller {
             try {
                 $jwtdata = $this->objofjwt->DecodeToken($this->token['token']);
                 $userid = $jwtdata['user_id'];
-                $save_token = $this->mainpagedata->saveDeviceToken($userid);
+                $save_token = $this->mainpagedata->saveDeviceToken($userid, $this->token['token']);
                 if ($save_token) {
                     $Send_data = array('msg' => 'Device token record added successfully', 'success' => 1);
                 } else {
@@ -179,6 +180,36 @@ class Webservice extends CI_Controller {
             $Send_data = array('msg' => 'Unauthorized Access', 'success' => 0);
         }
         echo json_encode($Send_data);
+    }
+
+    public function facebook_login() {
+        if($this->facebook->is_authenticated()) { 
+            // Get user info from facebook 
+            $fbUser = $this->facebook->request('get', '/me?fields=id,first_name,last_name,email,link,gender,picture');
+
+            // Preparing data for database insertion 
+            $userData['oauth_provider'] = 'facebook'; 
+            $userData['oauth_uid']    = !empty($fbUser['id'])?$fbUser['id']:'';; 
+            $userData['first_name']    = !empty($fbUser['first_name'])?$fbUser['first_name']:''; 
+            $userData['last_name']    = !empty($fbUser['last_name'])?$fbUser['last_name']:''; 
+            $userData['email']        = !empty($fbUser['email'])?$fbUser['email']:''; 
+            $userData['gender']        = !empty($fbUser['gender'])?$fbUser['gender']:''; 
+            $userData['picture']    = !empty($fbUser['picture']['data']['url'])?$fbUser['picture']['data']['url']:''; 
+            $userData['link']        = !empty($fbUser['link'])?$fbUser['link']:'https://www.facebook.com/'; 
+
+        } else {
+            $data['authUrl'] =  $this->facebook->login_url();
+        }
+
+        echo json_encode($userData);
+    }
+
+    public function facebook_logout() {
+        if($this->facebook->destroy_session())
+            $Send_data = array('msg' => 'logout successful', 'success' => 1);
+        else
+            $Send_data = array('msg' => 'Invalid attempt', 'success' => 0);
+        json_encode($Send_data);
     }
    
 }

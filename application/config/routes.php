@@ -60,3 +60,5 @@ $route['api/resetpassword'] = "Webservice/resetpassword";
 $route['api/forgotPassword'] = "Webservice/forgotPassword";
 $route['api/changepassword'] = "Webservice/changepassword";
 $route['api/logout'] = "Webservice/logout";
+$route['api/facebook_login'] = "Webservice/facebook_login";
+$route['api/facebook_logout'] = "Webservice/facebook_logout";

@@ -127,9 +127,8 @@ class Mainpagedata extends CI_Model {
         return $this->db->query("DELETE FROM token_records WHERE user_id='$userid' and device_id='$device_id'");
     }
 
-    function saveDeviceToken($userid) {
+    function saveDeviceToken($userid, $token) {
         // $token = urldecode($_REQUEST['token']);
-        $token = ($_REQUEST['token']);
         $exist_record = $this->db->get_where('token_records', ['user_id' => $userid]);
         if ($exist_record->num_rows() > 0) {
             $data = array(
