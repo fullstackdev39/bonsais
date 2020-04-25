@@ -1,0 +1,5 @@
+database : fivestu2_bonsais
+username: fivestu2_bonsais
+password: bonsais
+bonsais.fivestarsmobi.com
+bonsais.fivestarsmobi.com/api/login
